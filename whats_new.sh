@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 import datetime
 import os
+import shutil
 from pathlib import Path
 import glob
 import configparser
 
 config = configparser.ConfigParser()
-config.read("whats_new.ini")
+config.read("whats_new_Arcade.ini")
+
+shutil.rmtree('/media/fat/_Arcade/_ @News de la semaine', ignore_errors=True, onerror=None)
 
 # Where is the default root?  We will use the parent of the directory the script is in, assuming we are in /media/fat/Scripts
 DEFAULT_ROOT = config.get(
@@ -22,12 +25,12 @@ DEFAULT_ROOT = config.get(
 ARCADE_ROOT = config.get(
     "DEFAULTS",
     "arcade_root",
-    fallback=os.getenv("ARCADE_ROOT", os.path.join(DEFAULT_ROOT, "_Arcade"))
+    fallback=os.getenv("ARCADE_ROOT", os.path.join(DEFAULT_ROOT, "/media/fat/_Arcade"))
 )
 
 # By default we will use the directory name "_@WhatsNew" but this can be overridden in the config file of environment variable
 WHATS_NEW_DIRECTORY_NAME = config.get(
-    "DEFAULTS", "whats_new_directory_name", fallback="_@WhatsNew"
+    "DEFAULTS", "whats_new_directory_name", fallback="/media/fat/_Arcade/_ @News de la semaine"
 )
 
 # Where are we going to store the symbolic links to the new files
@@ -102,11 +105,11 @@ def main():
         os.mkdir(WHATS_NEW_ROOT)
 
     # We need to make sure that the cores are in place, otherwise our symbolic links will not launch
-    if not os.path.exists(os.path.join(WHATS_NEW_ROOT, "cores")):
-        os.symlink(
-            os.path.join(ARCADE_ROOT, "cores"),
-            os.path.join(WHATS_NEW_ROOT, "cores")
-        )
+    #if not os.path.exists(os.path.join(WHATS_NEW_ROOT, "cores")):
+        #os.symlink(
+            #os.path.join(ARCADE_ROOT, "cores"),
+            #os.path.join(WHATS_NEW_ROOT, "cores")
+        #)
 
     # If it has been a small update, we may want to keep the old ones there, otherwise delete our existing links
     if len(selected_files) > MINIMUN_NUMBER_OF_FILES:
